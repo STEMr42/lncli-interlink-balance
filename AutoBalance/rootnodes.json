@@ -1,0 +1,18 @@
+{
+  "nodes": [
+    {
+      "name": "node1",
+      "pub_key": "pub key 1",
+      "rpcserver": "server:port",
+      "macaroon_path": "/path/to/admin.macaroon",
+      "tlscert_path": "/path/to/tls.cert"
+    },
+    {
+        "name": "node2",
+        "pub_key": "pub key 2",
+        "rpcserver": "server:port",
+        "macaroon_path": "/path/to/admin.macaroon",
+        "tlscert_path": "/path/to/tls.cert"
+    }
+  ]
+}
