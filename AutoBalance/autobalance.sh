@@ -2,7 +2,6 @@
 
 #get root node data
 rootNodes=$(cat rootnodes.json)
-rootNodePubKey=$(jq -r '[.nodes[].pub_key]' <<< ${rootNodes[@]})
 echo "rootNodes --->" 
 echo $(jq -r '.nodes[].name' <<< ${rootNodes[@]})
 
@@ -27,12 +26,12 @@ for node in $(jq '.nodes | keys | .[]' <<< ${rootNodes[@]}); do
    #get channels for all root nodes from the current root node
     for rNode in $(jq '.nodes | keys | .[]' <<< ${rootNodes[@]}); do
         listData=$(jq -r ".nodes[$rNode]" <<< ${rootNodes[@]});
-        pub_key=$(jq -r '.pub_key' <<< $listData);
-        if [ $pubKey != $pub_key ]; then
+        rPubKey=$(jq -r '.pub_key' <<< $listData);
+        if [ $pubKey != $rPubKey ]; then
             echo "local pubKey = $pubKey" 
-            echo "remote pub_key = $pub_key"
+            echo "remote pub_key = $rPubKey"
             echo "get channels"
-            chanData=$(lncli --rpcserver $socket --macaroonpath $macaroonpath --tlscertpath $tlscertpath listchannels --peer $pub_key)
+            chanData=$(lncli --rpcserver $socket --macaroonpath $macaroonpath --tlscertpath $tlscertpath listchannels --peer $rPubKey)
             numChannels=$(jq -r '.channels | length' <<< ${chanData[@]})
             echo "numChannels = $numChannels"
             echo "---"
@@ -61,7 +60,7 @@ for node in $(jq '.nodes | keys | .[]' <<< ${rootNodes[@]}); do
  # Comment this section out for testing
                         # SEND PAYMENT **********
                         lncli --rpcserver $socket --macaroonpath $macaroonpath --tlscertpath $tlscertpath \
-                        sendpayment --keysend --amt $amt --fee_limit 0 --dest $pub_key --outgoing_chan_id $chanID --data 34349334=496e7465726c696e6b20526562616c616e6365
+                        sendpayment --keysend --amt $amt --fee_limit 0 --dest $rPubKey --outgoing_chan_id $chanID --data 34349334=496e7465726c696e6b20526562616c616e6365
  #######################
                     fi #finished if not balanced    
                 fi #finished if active
