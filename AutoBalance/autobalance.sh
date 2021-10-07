@@ -51,9 +51,9 @@ for node in $(jq '.nodes | keys | .[]' <<< ${rootNodes[@]}); do
 
                #only attempt active channels
                 if [ $active ]; then
-                    targetBal=$(bc <<< "($capacity/2)+21000") #account for channel reserve and avoid small
+                    targetBal=$(bc <<< "($capacity/2)+21000") #account for channel reserve and avoid small payments
                     echo "target balance = $targetBal"
-                 if [ "$localBal" -ge "$targetBal" ] ; then
+                    if [ "$localBal" -ge "$targetBal" ] ; then
                         echo "*** balance me ***"
                         amt=$(bc <<< "($capacity/2)-$remoteBal")
                         echo "amt = $amt"
@@ -61,8 +61,10 @@ for node in $(jq '.nodes | keys | .[]' <<< ${rootNodes[@]}); do
                         # SEND PAYMENT **********
                         lncli --rpcserver $socket --macaroonpath $macaroonpath --tlscertpath $tlscertpath \
                         sendpayment --keysend --amt $amt --fee_limit 0 --dest $rPubKey --outgoing_chan_id $chanID --data 34349334=496e7465726c696e6b20526562616c616e6365
- #######################
-                    fi #finished if not balanced    
+ ############################################################
+                    else
+                        echo "localBal less than targetBal"
+                    fi #finished if not balanced
                 fi #finished if active
                 echo "---"
             done #completed channel loop
